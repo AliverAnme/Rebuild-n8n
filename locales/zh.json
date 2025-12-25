@@ -34,7 +34,8 @@
         "oauth2": {
             "clientId": "客户端 ID",
             "clientSecret": "客户端密钥"
-        }
+        },
+        "readMore": "阅读更多"
     },
     "generic.annotations": "注释",
     "generic.annotationData": "突出显示的数据",
@@ -501,6 +502,7 @@
     "codeNodeEditor.completer.$input.first": "@:_reusableBaseText.codeNodeEditor.completer.first",
     "codeNodeEditor.completer.$input.item": "生成当前项的项目",
     "codeNodeEditor.completer.$input.itemMatching": "@:_reusableBaseText.codeNodeEditor.completer.itemMatching",
+    "codeNodeEditor.completer.$input.last": "@:_reusableBaseText.codeNodeEditor.completer.last",
     "codeNodeEditor.completer.$itemIndex": "当前正在处理的输入项在列表中的位置",
     "codeNodeEditor.completer.$jmespath": "使用 <a target=\"_blank\" href=\"https://docs.n8n.io/code/cookbook/jmespath/\">JMESPath</a> 表达式从对象（或对象数组）中提取数据。适用于查询复杂的嵌套对象。如果表达式无效，则返回 <code>undefined</code>。",
     "codeNodeEditor.completer.$jmespath.args.obj": "要从中检索数据的对象或对象数组",
@@ -940,6 +942,7 @@
     "duplicateWorkflowDialog.cancel": "@:_reusableBaseText.cancel",
     "duplicateWorkflowDialog.chooseOrCreateATag": "选择或创建标签",
     "duplicateWorkflowDialog.duplicateWorkflow": "重复工作流",
+    "duplicateWorkflowDialog.enterWorkflowName": "输入工作流名称",
     "duplicateWorkflowDialog.save": "重复",
     "duplicateWorkflowDialog.errors.missingName.title": "名称缺失",
     "duplicateWorkflowDialog.errors.missingName.message": "请输入一个名称。",
@@ -1232,6 +1235,7 @@
     "folders.move.modal.workflow.count": "{count} 个工作流",
     "folders.move.modal.title": "移动 {resourceTypeLabel} {folderName}",
     "folders.move.modal.description": "这也会移动{folders}{workflows}。",
+    "folders.move.modal.confirm": "移动 {resourceTypeLabel}",
     "folders.move.modal.project.label": "项目或用户",
     "folders.move.modal.project.placeholder": "选择一个项目或用户",
     "folders.move.modal.folder.label": "文件夹",
@@ -1894,6 +1898,7 @@
     "nodeWebhooks.showMessage.title.formTrigger": "表单网址已复制",
     "nodeWebhooks.showMessage.title.chatTrigger": "聊天网址已复制",
     "nodeWebhooks.showMessage.title.mcpTrigger": "MCP URL 已复制",
+    "nodeWebhooks.showMessage.message.formTrigger": "通过此 URL 提交的表单将在工作流激活时触发。",
     "nodeWebhooks.showMessage.message.chatTrigger": "通过此URL提交的聊天内容将在工作流激活时触发。",
     "nodeWebhooks.testUrl": "测试网址",
     "nodeWebhooks.webhookUrls": "Webhook URL",
@@ -2545,6 +2550,7 @@
     "settings.log-streaming": "日志流式传输",
     "settings.log-streaming.heading": "日志流",
     "settings.log-streaming.add": "添加新目的地",
+    "settings.log-streaming.actionBox.title": "适用于企业版计划",
     "settings.log-streaming.actionBox.description": "日志流功能作为付费功能提供。了解更多信息。",
     "settings.log-streaming.actionBox.button": "查看方案",
     "settings.log-streaming.infoText": "将日志发送到您选择的外部端点。您还可以使用环境变量将日志写入文件或控制台。<a href=\"https://docs.n8n.io/log-streaming/\" target=\"_blank\">更多信息</a>",
@@ -3593,6 +3599,7 @@
     "settings.ldap.usersScanned": "用户扫描了 {scanned}",
     "settings.ldap.confirmMessage.beforeSaveForm.cancelButtonText": "不",
     "settings.ldap.confirmMessage.beforeSaveForm.confirmButtonText": "是的，禁用它",
+    "settings.ldap.confirmMessage.beforeSaveForm.headline": "您确定要禁用 LDAP 登录吗？",
     "settings.ldap.confirmMessage.beforeSaveForm.message": "如果你这样做，所有 LDAP 用户都将转换为电子邮件用户。",
     "settings.ldap.disabled.title": "企业版计划中可用",
     "settings.ldap.disabled.description": "LDAP 是一项付费功能。了解更多相关信息。",
