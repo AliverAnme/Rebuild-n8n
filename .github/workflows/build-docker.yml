@@ -130,8 +130,8 @@ jobs:
       
       - name: 安装依赖
         run: |
-          pnpm install
-          pnpm add zx path
+          pnpm install -w
+          pnpm add zx path -w
 
       - name: 验证依赖
         run: |
@@ -163,10 +163,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       
-      - name: 提交变更
+      - name: 结束
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add -A
-          git status
-          git diff --cached --stat
+          echo "成功。"
