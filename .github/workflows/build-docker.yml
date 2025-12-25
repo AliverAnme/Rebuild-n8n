@@ -129,15 +129,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
       
-      - name: 安装依赖
-        run: |
-          pnpm install -w
-          pnpm add zx path -w
-
-      - name: 验证依赖
-        run: |
-          ls -la node_modules/zx/ 2>/dev/null && echo "zx 已安装" || echo "zx 未安装"
-
       - name: 预编译
         run: |
           node scripts/build-n8n.mjs
