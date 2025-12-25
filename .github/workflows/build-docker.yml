@@ -1,25 +1,92 @@
-name: Fetch Repository and Apply Patch
+name: Fix n8n and build docker
 
 on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
-
-env:
-  IMAGE_BASE_NAME: n8n
-  RUNNERS_IMAGE_BASE_NAME: runners
-
+    inputs:
+      ref:
+        description: '拉取标签，格式: owner/repo@tag，例如: n8n-io/n8n@2.1.1'
+        required: false
+        default: ''
 
 jobs:
   apply-patch:
     runs-on: ubuntu-latest
     
     steps:
-      - name: 拉取指定仓库
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 获取最新 n8n 版本
+        id: latest-version
+        run: |
+          pip install requests packaging
+          python scripts/get_latest_n8n_release.py
+
+      - name: 输出最新版本
+        run: |
+          echo "最新 n8n 版本: ${{ steps.latest-version.outputs.LATEST_TAG }}"
+
+      - name: 解析仓库和标签
+        id: parse-ref
+        if: inputs.ref != ''
+        run: |
+          REFS="${{ inputs.ref }}"
+          
+          if [[ "$REFS" == *"@"* ]]; then
+            REPO_PART=$(echo "$REFS" | cut -d'@' -f1)
+            TAG="${{ inputs.ref }}"  # 完整标签，包括前缀
+            
+            if [[ "$REPO_PART" == *"/"* ]]; then
+              REPO="$REPO_PART"
+            else
+              REPO="n8n-io/$REPO_PART"
+            fi
+            
+            echo "repository=$REPO" >> $GITHUB_OUTPUT
+            echo "tag=$TAG" >> $GITHUB_OUTPUT
+            echo "解析结果: 仓库=$REPO, 标签=$TAG"
+          else
+            echo "格式错误，请使用 仓库名@标签 格式"
+            exit 1
+          fi
+
+      - name: 拉取目标仓库
         uses: actions/checkout@v4
         with:
-          repository: owner/repo-name
+          repository: ${{ inputs.ref != '' && steps.parse-ref.outputs.repository || 'n8n-io/n8n' }}
+          ref: ${{ inputs.ref != '' && steps.parse-ref.outputs.tag || steps.latest-version.outputs.LATEST_TAG }}
           fetch-depth: 1
+
+      - name: 拉取locales和patches
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          path: source-repo
+          sparse-checkout: |
+            locales
+            patches
+          sparse-checkout-cone-mode: false
+
+      - name: 复制locales文件
+        run: |
+          mkdir -p packages/frontend/@n8n/i18n/src/locales
+          cp -r source-repo/locales/* packages/frontend/@n8n/i18n/src/locales/
+
+      - name: 应用patch
+        run: |
+          for patch in source-repo/patches/*.patch; do
+            if [ -f "$patch" ]; then
+              echo "Applying: $patch"
+              git apply "$patch"
+            fi
+          done
 
       - name: 读取package.json
         id: package
@@ -43,42 +110,8 @@ jobs:
         run: |
           npm install -g pnpm@${{ steps.package.outputs.pnpm_version }}
 
-      - name: 应用patch
-        run: |
-          for patch in patches/*.patch; do
-            if [ -f "$patch" ]; then
-              echo "Applying: $patch"
-              git apply "$patch"
-            fi
-          done
-
-      - name: 复制locales文件
-        run: |
-          mkdir -p packages/frontend/@n8n/i18n/src/locales
-          cp -r locales/* packages/frontend/@n8n/i18n/src/locales/
-
-      - name: 设置Docker
+      - name: 设置Docker BuildX
         uses: docker/setup-buildx-action@v3
-
-      - name: 验证Docker环境
-        run: |
-          docker version
-          docker buildx version
-          echo "IMAGE_BASE_NAME: $IMAGE_BASE_NAME"
-          echo "IMAGE_TAG: ${{ steps.package.outputs.image_tag }}"
-          echo "RUNNERS_IMAGE_BASE_NAME: $RUNNERS_IMAGE_BASE_NAME"
-
-      - name: 安装依赖
-        run: |
-          pnpm install
-
-      - name: 构建项目
-        run: |
-          node scripts/build-n8n.mjs
-
-      - name: 构建Docker镜像
-        run: |
-          node scripts/dockerize-n8n.mjs
 
       - name: 获取小写用户名
         id: lowercase
@@ -93,19 +126,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: 打标签并推送n8n镜像
-        run: |
-          IMAGE_ID=ghcr.io/${{ steps.lowercase.outputs.owner }}/n8n:${{ steps.package.outputs.image_tag }}
-          docker tag n8n:latest $IMAGE_ID
-          docker push $IMAGE_ID
-          echo "Pushed: $IMAGE_ID"
+      - name: 构建并推送n8n镜像
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/images/n8n/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ steps.lowercase.outputs.owner }}/n8n:${{ steps.package.outputs.image_tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: 打标签并推送runners镜像
-        run: |
-          IMAGE_ID=ghcr.io/${{ steps.lowercase.outputs.owner }}/runners:${{ steps.package.outputs.image_tag }}
-          docker tag runners:latest $IMAGE_ID
-          docker push $IMAGE_ID
-          echo "Pushed: $IMAGE_ID"
+      - name: 构建并推送runners镜像
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/images/runners/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ steps.lowercase.outputs.owner }}/runners:${{ steps.package.outputs.image_tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       
       - name: 提交变更
         run: |
