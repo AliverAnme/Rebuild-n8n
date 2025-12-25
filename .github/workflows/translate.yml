@@ -64,7 +64,7 @@ jobs:
         fi
 
         echo "Using release tag: $LATEST_VERSION"
-        echo "latest=$LATEST_VERSION" >> $GITHUB_OUTPUT
+        echo "REF_TAG=$LATEST_VERSION" >> $GITHUB_OUTPUT
 
     - name: Setup corepack and pnpm
       run: |
@@ -102,7 +102,7 @@ jobs:
         OPENAI_API_BASE: ${{ vars.OPENAI_API_BASE }}
         OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         OPENAI_API_CONCURRENT: ${{ vars.OPENAI_API_CONCURRENT }}
-        REF_TAG: ${{ steps.latest-version.outputs.LATEST_TAG }}
+        REF_TAG: ${{ steps.latest-version.outputs.REF_TAG }}
 
     - name: Translate Publish Git
       if: steps.check_tag.outputs.exists == 'false'
