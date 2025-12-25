@@ -127,10 +127,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
-
-      - name: 依赖安装和预编译
+      
+      - name: 安装依赖
         run: |
-          pnpm install zx path -w & node scripts/build-n8n.mjs
+          pnpm install
+          pnpm add zx path
+
+      - name: 验证依赖
+        run: |
+          ls -la node_modules/zx/ 2>/dev/null && echo "zx 已安装" || echo "zx 未安装"
+
+      - name: 预编译
+        run: |
+          node scripts/build-n8n.mjs
 
       - name: 构建并推送n8n镜像
         uses: docker/build-push-action@v5
