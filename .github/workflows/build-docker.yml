@@ -131,7 +131,16 @@ jobs:
       
       - name: 预编译
         run: |
-          node scripts/build-n8n.mjs
+          if [ -f "scripts/build-n8n.mjs" ]; then
+            echo "使用 build-n8n.mjs 进行构建..."
+            node scripts/build-n8n.mjs
+          else
+            echo "build-n8n.mjs 不存在，使用传统构建方法..."
+            pnpm install --frozen-lockfile
+            pnpm build
+            # 创建 compiled 目录以供 Docker 使用
+            pnpm --filter=n8n --prod deploy ./compiled
+          fi
 
       - name: 构建并推送n8n镜像
         uses: docker/build-push-action@v5
