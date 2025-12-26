@@ -80,7 +80,7 @@ jobs:
     - name: Check if tag exists
       id: check_tag
       run: |
-        TAG="${{ steps.latest_release.outputs.latest }}"
+        TAG="${{ steps.latest-version.outputs.LATEST_TAG }}"
         echo "Checking for remote tag: $TAG"
         if git ls-remote --tags origin | grep "refs/tags/$TAG$"; then
           echo "exists=true" >> $GITHUB_OUTPUT
@@ -149,7 +149,7 @@ jobs:
         body: |
           自动发布的中文语言包版本。
         files: |
-            locales/zh.json
+            n8n-i18n-chinese/locales/zh.json
         draft: false
         prerelease: false
       env:
