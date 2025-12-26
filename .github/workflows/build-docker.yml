@@ -133,7 +133,7 @@ jobs:
         run: |
           rm -rf node_modules packages/*/node_modules
           pnpm config set resolution-mode=lowest-direct
-          pnpm install -w && pnpm add zx path -w
+          pnpm install --legacy-peer-deps -w && pnpm add zx path -w
 
       - name: 验证依赖
         run: |
