@@ -129,18 +129,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
       
+      - name: 安装依赖
+        run: |
+          pnpm install -w
+          pnpm add zx path -w
+
+      - name: 验证依赖
+        run: |
+          ls -la node_modules/zx/ 2>/dev/null && echo "zx 已安装" || echo "zx 未安装"
+
       - name: 预编译
         run: |
-          # 注意: scripts/build-n8n.mjs 来自第7步"拉取目标仓库"中检出的 n8n 仓库
-          # build-n8n.mjs 在 n8n >= 2.0.0 中引入，用于本地构建
-          # 旧版本使用 npm 安装，不支持本地打补丁构建
-          if [ ! -f "scripts/build-n8n.mjs" ]; then
-            echo "错误: 此工作流仅支持 n8n >= 2.0.0"
-            echo "build-n8n.mjs 脚本不存在，可能是 n8n 版本过旧"
-            echo "请使用 n8n@2.0.0 或更高版本"
-            exit 1
-          fi
-          echo "使用 build-n8n.mjs 进行构建..."
           node scripts/build-n8n.mjs
 
       - name: 构建并推送n8n镜像
