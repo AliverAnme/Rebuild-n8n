@@ -132,8 +132,7 @@ jobs:
       - name: 安装依赖
         run: |
           rm -rf node_modules packages/*/node_modules
-          pnpm config set strict-peer-dependencies false
-          pnpm install -w && pnpm add zx path -w
+          pnpm install --frozen-lockfile
 
       - name: 验证依赖
         run: |
