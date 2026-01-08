@@ -29,17 +29,20 @@ jobs:
         path: ./temp-get-latest
 
     - name: 设置 Python
+      if: ${{ !github.event.inputs.tag || github.event.inputs.tag == '' }}
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
     - name: 获取最新 n8n 版本
+      if: ${{ !github.event.inputs.tag || github.event.inputs.tag == '' }}
       id: latest-version
       run: |
         pip install requests packaging
         python temp-get-latest/scripts/get_latest_n8n_release.py
 
     - name: 输出最新版本
+      if: ${{ !github.event.inputs.tag || github.event.inputs.tag == '' }}
       run: |
         echo "最新 n8n 版本: ${{ steps.latest-version.outputs.LATEST_TAG }}"
 
@@ -80,7 +83,7 @@ jobs:
     - name: Check if tag exists
       id: check_tag
       run: |
-        TAG="${{ steps.latest-version.outputs.LATEST_TAG }}"
+        TAG="${{ steps.latest_release.outputs.REF_TAG }}"
         echo "Checking for remote tag: $TAG"
         if git ls-remote --tags origin | grep "refs/tags/$TAG$"; then
           echo "exists=true" >> $GITHUB_OUTPUT
