@@ -1,9 +1,14 @@
 diff --git a/packages/cli/src/services/frontend.service.ts b/packages/cli/src/services/frontend.service.ts
-index 18d220269f..6e9227e9dd 100644
+index 282bd3e2d2..e8472eebbe 100644
 --- a/packages/cli/src/services/frontend.service.ts
 +++ b/packages/cli/src/services/frontend.service.ts
-@@ -331,16 +331,16 @@ export class FrontendService {
-
+@@ -332,16 +332,16 @@ export class FrontendService {
+ 				dismissed: [],
+ 			},
+ 			askAi: {
+-				enabled: false,
++				enabled: true,
+ 			},
  			aiBuilder: {
 -				enabled: false,
 -				setup: false,
@@ -17,4 +22,6 @@ index 18d220269f..6e9227e9dd 100644
 +				enabled: true,
 +				credits: -1,
 +				setup: true,
-
+ 			},
+ 			ai: {
+ 				allowSendingParameterValues: true,

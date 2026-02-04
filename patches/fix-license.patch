@@ -1,43 +1,26 @@
 diff --git a/packages/cli/src/license.ts b/packages/cli/src/license.ts
-index 196528fd33..2b50057c2a 100644
+index 196528fd33..e919d3ab98 100644
 --- a/packages/cli/src/license.ts
 +++ b/packages/cli/src/license.ts
-@@ -252,7 +252,10 @@ export class License implements LicenseProvider {
+@@ -252,7 +252,7 @@ export class License implements LicenseProvider {
  	}
  
  	isLicensed(feature: BooleanLicenseFeature) {
 -		return this.manager?.hasFeatureEnabled(feature) ?? false;
-+		if (feature === LICENSE_FEATURES.SHOW_NON_PROD_BANNER || feature === LICENSE_FEATURES.API_DISABLED) {
-+			return false;
-+		}
 +		return true;
  	}
  
  	/** @deprecated Use `LicenseState.isDynamicCredentialsLicensed` instead. */
-@@ -380,7 +383,21 @@ export class License implements LicenseProvider {
+@@ -342,7 +342,7 @@ export class License implements LicenseProvider {
+ 
+ 	/** @deprecated Use `LicenseState.isAPIDisabled` instead. */
+ 	isAPIDisabled() {
+-		return this.isLicensed(LICENSE_FEATURES.API_DISABLED);
++		return false;
  	}
  
- 	getValue<T extends keyof FeatureReturnType>(feature: T): FeatureReturnType[T] {
--		return this.manager?.getFeatureValue(feature) as FeatureReturnType[T];
-+		if (feature === 'planName') {
-+			return 'Enterprise' as FeatureReturnType[T];
-+		}
-+
-+    	// Return unlimited for all quotas
-+		if (Object.values(LICENSE_QUOTAS).includes(feature as any)) {
-+			return UNLIMITED_LICENSE_QUOTA as FeatureReturnType[T];
-+		}
-+
-+    	// Return true for all boolean features
-+		if (Object.values(LICENSE_FEATURES).includes(feature as any)) {
-+			return true as FeatureReturnType[T];
-+		}
-+
-+		return true as FeatureReturnType[T];
- 	}
- 
- 	getManagementJwt(): string {
-@@ -411,46 +428,43 @@ export class License implements LicenseProvider {
+ 	/** @deprecated Use `LicenseState.isWorkerViewLicensed` instead. */
+@@ -411,46 +411,43 @@ export class License implements LicenseProvider {
  	}
  
  	getConsumerId() {
@@ -62,7 +45,7 @@ index 196528fd33..2b50057c2a 100644
  	/** @deprecated Use `LicenseState` instead. */
  	getVariablesLimit() {
 -		return this.getValue(LICENSE_QUOTAS.VARIABLES_LIMIT) ?? UNLIMITED_LICENSE_QUOTA;
-+		return UNLIMITED_LICENSE_QUOTA;	
++		return UNLIMITED_LICENSE_QUOTA;
  	}
  
  	/** @deprecated Use `LicenseState` instead. */
@@ -92,7 +75,7 @@ index 196528fd33..2b50057c2a 100644
  	}
  
  	getInfo(): string {
-@@ -463,7 +477,7 @@ export class License implements LicenseProvider {
+@@ -463,7 +460,7 @@ export class License implements LicenseProvider {
  
  	/** @deprecated Use `LicenseState` instead. */
  	isWithinUsersLimit() {
