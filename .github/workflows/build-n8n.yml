@@ -112,8 +112,6 @@ jobs:
 
       - name: 安装pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: ${{ steps.package.outputs.pnpm_version }}
 
       - name: 设置Docker BuildX
         uses: docker/setup-buildx-action@v3
