@@ -19,6 +19,18 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        
+      - name: 释放磁盘空间
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # 可选参数，保留某些工具，默认会删除大量预装软件
+          tool-cache: true    # 删除 GitHub 的 tool cache（约 10GB）
+          android: true       # 删除 Android SDK（约 12GB）
+          dotnet: true        # 删除 .NET SDK（约 10GB）
+          haskell: true       # 删除 Haskell 平台（约 2GB）
+          large-packages: true # 删除一些大包（如 mysql, azure-cli 等）
+          docker-images: true  # 删除所有预装的 Docker 镜像（约 2GB）
+          swap-storage: true   # 清理 swap 文件
 
       - name: 设置 Python
         uses: actions/setup-python@v5
