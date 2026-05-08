@@ -32,8 +32,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'pnpm'
-        cache-dependency-path: n8n-i18n-chinese/scripts/pnpm-lock.yaml
 
     - name: 设置 Python
       if: ${{ !github.event.inputs.tag || github.event.inputs.tag == '' }}
